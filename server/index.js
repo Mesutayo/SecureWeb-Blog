@@ -6,6 +6,7 @@ const postRoutes = require('./routes/posts');
 const { initDatabase } = require('./database/db');
 
 const app = express();
+app.disable("x-powered-by");
 const PORT = process.env.PORT || 5050;
 
 // Middleware
