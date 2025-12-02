@@ -55,7 +55,7 @@ npm run install-all
 1. Start the backend server:
 ```bash
 npm start
-# or for development with nodemon auto-reload :
+# or for development with nodemon for auto-reload :
 npm run dev
 ```
 
