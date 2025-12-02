@@ -1,0 +1,70 @@
+.post-list h1 {
+  margin-bottom: 30px;
+  color: #333;
+}
+
+.posts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.post-card {
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.post-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.post-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.post-card h2 {
+  color: #333;
+  margin-bottom: 10px;
+  font-size: 20px;
+}
+
+.post-excerpt {
+  color: #666;
+  margin-bottom: 15px;
+  line-height: 1.6;
+}
+
+.post-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  color: #999;
+  padding-top: 15px;
+  border-top: 1px solid #eee;
+}
+
+.post-author {
+  font-weight: bold;
+}
+
+.loading {
+  text-align: center;
+  padding: 40px;
+  font-size: 18px;
+  color: #666;
+}
+
+.no-posts {
+  text-align: center;
+  padding: 40px;
+  background: white;
+  border-radius: 8px;
+  color: #666;
+}
+
