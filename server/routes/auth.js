@@ -8,7 +8,7 @@ const JWT_SECRET = process.env.JWT_SECRET || 'insecure-secret-key-change-in-prod
 
 // Register new user
 router.post('/register', (req, res) => {
-  const { username, email, password, role } = req.body;
+  const { username, email, password } = req.body;
   const db = getDb();
 
   if (!username || !email || !password) {
@@ -19,7 +19,7 @@ router.post('/register', (req, res) => {
   const hashedPassword = bcrypt.hashSync(password, 10);
   
   // Default role to 'user' if not provided or invalid
-  const userRole = (role === 'admin') ? 'admin' : 'user';
+  const userRole = 'user';
 
   db.run(
     'INSERT INTO users (username, email, password, role) VALUES (?, ?, ?, ?)',
