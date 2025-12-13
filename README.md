@@ -95,10 +95,9 @@ This application is intentionally built with basic security measures to allow fo
 6. **No Rate Limiting**: API endpoints are not rate-limited
 7. **Weak Password Policy**: No password strength requirements
 8. **No Token Refresh**: JWT tokens don't have refresh mechanism
-9. **SQL Injection Risk**: While using parameterized queries, could be improved with ORM
-10. **No HTTPS Enforcement**: Application doesn't enforce secure connections
-11. **CORS Configuration**: CORS is open to all origins
-12. **Error Messages**: Detailed error messages may leak information
+9. **No HTTPS Enforcement**: Application doesn't enforce secure connections
+10. **CORS Configuration**: CORS is open to all origins
+11. **Error Messages**: Detailed error messages may leak information
 
 ### Security Improvements That Can Be Made:
 
@@ -109,7 +108,6 @@ This application is intentionally built with basic security measures to allow fo
 - Implement rate limiting on authentication endpoints
 - Add password strength requirements and complexity rules
 - Implement JWT refresh tokens
-- Use an ORM (like Sequelize) for better SQL injection protection
 - Enforce HTTPS in production
 - Configure CORS properly for production
 - Sanitize error messages to prevent information leakage
