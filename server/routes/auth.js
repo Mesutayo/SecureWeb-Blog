@@ -1,3 +1,11 @@
+const rateLimit = require('express-rate-limit');
+
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 5, // limit each IP to 5 login attempts per windowMs
+  message: 'Too many authentication attempts, please try again later.'
+});
+const { body, validationResult } = require('express-validator');
 const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
@@ -10,7 +18,33 @@ if (!process.env.JWT_SECRET) {
 
 const JWT_SECRET = process.env.JWT_SECRET;
 // Register new user
-router.post('/register', (req, res) => {
+router.post('/login', authLimiter, (req, res) => {
+  // ... existing login code
+});
+router.post('/register', authLimiter, (req, res) => {
+  // ... existing register code
+});
+  // ... 
+router.post('/register', [
+  body('username')
+    .trim()
+    .isLength({ min: 3, max: 30 })
+    .matches(/^[a-zA-Z0-9_]+$/)
+    .withMessage('Username must be 3-30 characters, alphanumeric and underscores only'),
+  body('email')
+    .trim()
+    .isEmail()
+    .normalizeEmail()
+    .withMessage('Valid email is required'),
+  body('password')
+    .isLength({ min: 8 })
+    .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/)
+    .withMessage('Password must be at least 8 characters with uppercase, lowercase, and number')
+], (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
   const { username, email, password } = req.body;
   const db = getDb();
 
@@ -52,7 +86,14 @@ router.post('/register', (req, res) => {
 });
 
 // Login
-router.post('/login', (req, res) => {
+router.post('/login', [
+  body('username').trim().notEmpty().withMessage('Username is required'),
+  body('password').notEmpty().withMessage('Password is required')
+],(req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
   const { username, password } = req.body;
   const db = getDb();
 

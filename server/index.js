@@ -1,3 +1,4 @@
+const rateLimit = require('express-rate-limit');
 const cookieParser = require('cookie-parser');
 const csrf = require('csurf');
 
@@ -9,15 +10,26 @@ const bodyParser = require('body-parser');
 const authRoutes = require('./routes/auth');
 const postRoutes = require('./routes/posts');
 const { initDatabase } = require('./database/db');
-
+const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // limit each IP to 100 requests per windowMs
+  message: 'Too many requests from this IP, please try again later.'
+});
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 5, // limit each IP to 5 requests per windowMs
+  message: 'Too many login attempts, please try again later.'
+});
 const app = express();
 app.disable("x-powered-by");
 const PORT = process.env.PORT || 5050;
+
 
 // Middleware
 let corsOptions = {
   origin: 'http://localhost:3000'
 };
+app.use('/api/', apiLimiter);
 app.use(cookieParser());
 app.use(csrfProtection);
 app.use(cors(corsOptions));
