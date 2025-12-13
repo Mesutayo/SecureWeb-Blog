@@ -1,3 +1,7 @@
+const cookieParser = require('cookie-parser');
+const csrf = require('csurf');
+
+const csrfProtection = csrf({ cookie: true });
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
@@ -14,14 +18,17 @@ const PORT = process.env.PORT || 5050;
 let corsOptions = {
   origin: 'http://localhost:3000'
 };
-
+app.use(cookieParser());
+app.use(csrfProtection);
 app.use(cors(corsOptions));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // Initialize database
 initDatabase();
-
+app.get('/api/csrf-token', (req, res) => {
+  res.json({ csrfToken: req.csrfToken() });
+});
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/posts', postRoutes);

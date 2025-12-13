@@ -16,6 +16,10 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    axios.get('/api/csrf-token')
+    .then(response => {
+      axios.defaults.headers.common['X-CSRF-Token'] = response.data.csrfToken;
+    });
     const token = localStorage.getItem('token');
     if (token) {
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
