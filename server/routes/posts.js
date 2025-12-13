@@ -1,3 +1,4 @@
+const { body, param, validationResult } = require('express-validator');
 const express = require('express');
 const router = express.Router();
 const { getDb } = require('../database/db');
@@ -46,7 +47,21 @@ router.get('/:id', (req, res) => {
 });
 
 // Create new post (authenticated users only)
-router.post('/', authenticateToken, (req, res) => {
+router.post('/', authenticateToken, [
+  body('title')
+    .trim()
+    .isLength({ min: 1, max: 200 })
+    .escape()
+    .withMessage('Title must be 1-200 characters'),
+  body('content')
+    .trim()
+    .isLength({ min: 1, max: 10000 })
+    .withMessage('Content must be 1-10000 characters')
+],(req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
   const db = getDb();
   const { title, content } = req.body;
   const authorId = req.user.id;
@@ -82,7 +97,22 @@ router.post('/', authenticateToken, (req, res) => {
 });
 
 // Update post (author or admin only)
-router.put('/:id', authenticateToken, (req, res) => {
+router.put('/:id', authenticateToken,[
+  param('id').isInt().withMessage('Invalid post ID'),
+  body('title')
+    .trim()
+    .isLength({ min: 1, max: 200 })
+    .escape()
+    .withMessage('Title must be 1-200 characters'),
+  body('content')
+    .trim()
+    .isLength({ min: 1, max: 10000 })
+    .withMessage('Content must be 1-10000 characters')
+],  (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
   const db = getDb();
   const postId = req.params.id;
   const { title, content } = req.body;
