@@ -3,6 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import './PostDetail.css';
+import DOMPurify from 'dompurify';
 
 const PostDetail = () => {
   const { id } = useParams();
@@ -67,9 +68,12 @@ const PostDetail = () => {
           <span className="post-author">By {post.author_name}</span>
           <span className="post-date">
             {new Date(post.created_at).toLocaleString()}
-          </span>
+          </span> 
         </div>
-        <div className="post-body">{post.content}</div>
+        <div 
+          className="post-body" 
+          dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(post.content) }}
+        />
         {canEdit && (
           <div className="post-actions">
             <Link to={`/edit/${post.id}`} className="btn btn-primary">
