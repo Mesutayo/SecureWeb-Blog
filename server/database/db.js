@@ -63,7 +63,7 @@ const createDefaultUsers = () => {
 
     if (row.count === 0) {
       // Create default admin user
-      const adminPassword = bcrypt.hashSync('admin123', 10);
+      const adminPassword = bcrypt.hashSync('Admin@123!Secure', 10);
       db.run(
         'INSERT INTO users (username, email, password, role) VALUES (?, ?, ?, ?)',
         ['admin', 'admin@blog.com', adminPassword, 'admin'],
@@ -77,7 +77,7 @@ const createDefaultUsers = () => {
       );
 
       // Create default regular user
-      const userPassword = bcrypt.hashSync('user123', 10);
+      const userPassword = bcrypt.hashSync('User@123!Secure', 10);
       db.run(
         'INSERT INTO users (username, email, password, role) VALUES (?, ?, ?, ?)',
         ['user', 'user@blog.com', userPassword, 'user'],

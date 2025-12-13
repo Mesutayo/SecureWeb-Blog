@@ -37,10 +37,10 @@ router.post('/register', [
     .normalizeEmail()
     .withMessage('Valid email is required'),
   body('password')
-    .isLength({ min: 8 })
-    .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/)
-    .withMessage('Password must be at least 8 characters with uppercase, lowercase, and number')
-], (req, res) => {
+  .isLength({ min: 12 })
+  .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])/)
+  .withMessage('Password must be at least 12 characters with uppercase, lowercase, number, and special character')
+], authLimiter, (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
