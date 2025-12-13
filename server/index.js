@@ -1,6 +1,8 @@
 const rateLimit = require('express-rate-limit');
 const cookieParser = require('cookie-parser');
 const csrf = require('csurf');
+const https = require('https');
+const fs = require('fs');
 
 const csrfProtection = csrf({ cookie: true });
 require('dotenv').config();
@@ -24,7 +26,29 @@ const app = express();
 app.disable("x-powered-by");
 const PORT = process.env.PORT || 5050;
 
-
+if (process.env.NODE_ENV === 'production') {
+  const http = require('http');
+  
+  http.createServer((req, res) => {
+    res.writeHead(301, { "Location": "https://" + req.headers['host'] + req.url });
+    res.end();
+  }).listen(80);
+  
+  // HTTPS server
+  const options = {
+    key: fs.readFileSync(process.env.SSL_KEY_PATH),
+    cert: fs.readFileSync(process.env.SSL_CERT_PATH)
+  };
+  
+  https.createServer(options, app).listen(443, () => {
+    console.log('HTTPS server running on port 443');
+  });
+} else {
+  // Development: HTTP only
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+}
 // Middleware
 let corsOptions = {
   origin: 'http://localhost:3000'
