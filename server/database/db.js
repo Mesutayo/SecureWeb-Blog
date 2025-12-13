@@ -75,7 +75,20 @@ const createDefaultUsers = () => {
           }
         }
       );
-
+      db.run(`
+        CREATE TABLE IF NOT EXISTS refresh_tokens (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          user_id INTEGER NOT NULL,
+          token TEXT UNIQUE NOT NULL,
+          expires_at DATETIME NOT NULL,
+          created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+          FOREIGN KEY (user_id) REFERENCES users(id)
+        )
+      `, (err) => {
+        if (err) {
+          console.error('Error creating refresh_tokens table:', err.message);
+        }
+      });
       // Create default regular user
       const userPassword = bcrypt.hashSync('User@123!Secure', 10);
       db.run(

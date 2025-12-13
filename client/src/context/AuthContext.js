@@ -41,14 +41,46 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const login = (token, userData) => {
-    localStorage.setItem('token', token);
-    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+  const login = (accessToken, refreshToken, userData) => {
+    localStorage.setItem('accessToken', accessToken);
+    localStorage.setItem('refreshToken', refreshToken);
+    axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
     setUser(userData);
   };
+  const refreshAccessToken = async () => {
+    const refreshToken = localStorage.getItem('refreshToken');
+    if (!refreshToken) {
+      logout();
+      return null;
+    }
+    try {
+      const response = await axios.post('/api/auth/refresh', { refreshToken });
+      const newAccessToken = response.data.accessToken;
+      localStorage.setItem('accessToken', newAccessToken);
+      axios.defaults.headers.common['Authorization'] = `Bearer ${newAccessToken}`;
+      return newAccessToken;
+    } catch (error) {
+      logout();
+      return null;
+    }
+  };
+  axios.interceptors.response.use(
+    (response) => response,
+    async (error) => {
+      if (error.response?.status === 401) {
+        const newToken = await refreshAccessToken();
+        if (newToken && error.config) {
+          error.config.headers['Authorization'] = `Bearer ${newToken}`;
+          return axios.request(error.config);
+        }
+      }
+      return Promise.reject(error);
+    }
+  );
 
   const logout = () => {
-    localStorage.removeItem('token');
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
     delete axios.defaults.headers.common['Authorization'];
     setUser(null);
   };
